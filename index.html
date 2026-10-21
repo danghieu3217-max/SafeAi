@@ -899,7 +899,7 @@
         // ================= CHAT CÙNG SAFE AI (GEMINI QUA MÁY CHỦ TRUNG GIAN) =================
         // Sau khi deploy Cloudflare Worker, thay URL bên dưới bằng URL Worker thật.
         // KHÔNG đặt Gemini API key trong file HTML này.
-        const SAFE_AI_API_URL = "PASTE_YOUR_CLOUDFLARE_WORKER_URL_HERE";
+        const SAFE_AI_API_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnT6pHc322d3fQj1RwQQM13-N2iDkqrl-yp3F2bK98PTnzDfEH7EHeo49W2ASgn-c61MqyCgTE0FI28UR9xjxKVDRHO5VBqFZD7P1N0ADkEIS3TlkjRnbBpyUT6_M9pLVhNFq_6g39TpuJ0vaGYSd2XxDxZ_NtYMlwzMv-cpK65VOyguXw9HvXg_UOE8MuoO85cN_PKwzEa0tDmsK4UfIVqlOwvVaZEV4ZxtpGvc_VIz1-mc4vo-WYhaJqWqgXMBukvNJpe0oLmMp4Fq2lFNlI6_vwpbNA&lib=M5lEU_LF8BZ0vGRh2FuGt_GyLTFvI9tHr";
         let chatIsSending = false;
 
         function openChatModal() {
@@ -1009,5 +1009,28 @@
         });
 
     </script>
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ message: question }),
+        redirect: "follow"
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.ok || !data.answer) {
+        throw new Error(data.error || "Máy chủ chưa trả lời được.");
+      }
+      reply.textContent = data.answer;
+    } catch (error) {
+      reply.textContent =
+        "Chưa kết nối được AI. Hãy kiểm tra URL Web App, quyền truy cập và triển khai Apps Script. Chi tiết: " +
+        error.message;
+    } finally {
+      input.disabled = false;
+      send.disabled = false;
+      send.textContent = "Gửi ➤";
+      input.focus();
+    }
+  });
+})();
+</script>
 </body>
 </html>
